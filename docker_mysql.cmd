@@ -1,0 +1,1 @@
+docker run -p 3306:3306 -v E:\Development\DockerMySqlData\equipment:/var/lib/mysql --env MYSQL_ROOT_PASSWORD=Zillaga --env MYSQL_USER=bm_apps --env MYSQL_PASSWORD=1grogme2 --name BM-MySql mysql:8.0.19

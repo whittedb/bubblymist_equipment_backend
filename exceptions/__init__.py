@@ -1,0 +1,2 @@
+class MissingEnvironmentValueException(Exception):
+    pass

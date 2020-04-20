@@ -1,0 +1,604 @@
+openapi: 3.0.1
+info:
+  title: Bubbly Mist Equipment
+  description: This is the swagger file that goes with our server code
+  version: 0.0.1
+servers:
+  - url: /v1
+
+# Paths supported by the server application
+paths:
+  /admin/equipment/{machine_id}:
+    delete:
+      operationId: equipment_admin_rest.delete_machine
+      tags:
+        - Admin
+      summary: Delete a machine
+      description: Delete a machine
+      parameters:
+        - name: machine_id
+          in: path
+          description: ID of machine to delete
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Machine successfully deleted
+        404:
+          description: Machine does not exist
+
+  /equipment/{machine_id}:
+    get:
+      operationId: equipment_rest.get_machine_by_id
+      tags:
+        - Equipment
+      summary: Get the machine specified by machine_id
+      description: Get the machine specified by machine_id
+      parameters:
+        - name: machine_id
+          in: path
+          description: ID of the machine to retrieve
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Successful read of machine
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Machine"
+        404:
+          description: Washer not found
+          $ref: "#/components/responses/NotFound"
+  /equipment_list/{active_state}:
+    get:
+      operationId: equipment_rest.get_equipment
+      tags:
+        - Equipment
+      summary: Get list of washers and dryers
+      description: Get list of washers and dryers
+      parameters:
+        - name: active_state
+          in: path
+          schema:
+            type: string
+            enum: [all, active, inactive]
+            description: >
+              Active Status:
+                * "all" - All active and inactive
+                * "active" - Only active machines
+                * "inactive" - Only inactive machines
+          required: true
+      responses:
+        200:
+          description: Successful read of washer/dryer list
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/MachineList"
+        400:
+          description: Invalid parameter
+  /equipment_enable/{machine_id}:
+    put:
+      operationId: equipment_rest.enable_machine
+      tags:
+        - Equipment
+      summary: Enable a disabled machine
+      description: Enable a disabled machine
+      parameters:
+        - name: machine_id
+          in: path
+          description: ID of machine to enable
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Machine successfully enabled
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Machine"
+        404:
+          description: Machine not found
+          $ref: "#/components/responses/NotFound"
+        409:
+          description: Machine of that type and  with that number is already active
+  /equipment_disable/{machine_id}:
+    put:
+      operationId: equipment_rest.disable_machine
+      tags:
+        - Equipment
+      summary: Disable a disabled machine
+      description: Disable a disabled machine
+      parameters:
+        - name: machine_id
+          in: path
+          description: ID of machine to disable
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Machine succesfully disabled
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Machine"
+        404:
+          description: Machine not found
+          $ref: "#/components/responses/NotFound"
+
+  /washer_list/{active_state}:
+    get:
+      operationId: equipment_rest.get_washers
+      tags:
+        - Equipment
+      summary: Get a list of washers
+      description: Get a list of washers
+      parameters:
+        - name: active_state
+          in: path
+          description: Specify which list of washers to retrieve
+          schema:
+            type: string
+            enum: [all, active, inactive]
+          required: true
+      responses:
+        200:
+          description: Successful read of the list of washers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineList"
+        400:
+          description: Invalid parameter
+  /washer/{number}:
+    get:
+      operationId: equipment_rest.get_washer_by_number
+      tags:
+        - Equipment
+      summary: Get an active washer
+      description: Get an active washer
+      parameters:
+        - name: number
+          in: path
+          description: Number of the active washer to retrieve
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Successful read of washer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        404:
+          description: Washer not found
+          $ref: "#/components/responses/NotFound"
+  /washer:
+    post:
+      operationId: equipment_rest.create_washer
+      tags:
+        - Equipment
+      summary: Create a new washer
+      description: Create a new washer
+      requestBody:
+        description: Washer to add
+        required: true
+        $ref: "#/components/requestBodies/NewMachineBody"
+      responses:
+        200:
+          description: Successfully created new washer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        409:
+          description: That washer already exists
+    put:
+      operationId: equipment_rest.update_washer
+      tags:
+        - Equipment
+      summary: Update a washer
+      description: Update a washer
+      requestBody:
+        description: Washer to update
+        required: true
+        $ref: "#/components/requestBodies/UpdateMachineBody"
+      responses:
+        200:
+          description: Successfully updated washer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        404:
+          description: Washer with ID doesn't exist
+        409:
+          description: That washer already exists
+
+  /dryer_list/{active_state}:
+    get:
+      operationId: equipment_rest.get_dryers
+      tags:
+        - Equipment
+      summary: A list of washers
+      description: Read the list of washers
+      parameters:
+        - name: active_state
+          in: path
+          description: Specify which list of dryers to retrieve
+          schema:
+            type: string
+            enum: [all, active, inactive]
+          required: true
+      responses:
+        200:
+          description: Successful read of the list of dryers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineList"
+        400:
+          description: Invalid parameter
+  /dryer/{number}:
+    get:
+      operationId: equipment_rest.get_dryer_by_number
+      tags:
+        - Equipment
+      summary: Get an active dryer
+      description: Get an active dryer
+      parameters:
+        - name: number
+          in: path
+          description: Dryer number to retrieve
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Successfule read of dryer
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Machine"
+        404:
+          description: Dryer not found
+          $ref: "#/components/responses/NotFound"
+  /dryer:
+    post:
+      operationId: equipment_rest.create_dryer
+      tags:
+        - Equipment
+      summary: Create a new dryer
+      description: Create a new dryer
+      requestBody:
+        description: Dryer to add
+        required: true
+        $ref: "#/components/requestBodies/NewMachineBody"
+      responses:
+        200:
+          description: Successfully created new dryer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        409:
+          description: Dryer already exists
+    put:
+      operationId: equipment_rest.update_dryer
+      tags:
+        - Equipment
+      summary: Update a dryer
+      description: Update a dryer
+      requestBody:
+        description: Dryer to update
+        required: true
+        $ref: "#/components/requestBodies/UpdateMachineBody"
+      responses:
+        200:
+          description: Successfully updated dryer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        404:
+          description: Dryer with ID doesn't exist
+        409:
+          description: That Dryer already exists
+
+  /repair_log:
+    post:
+      operationId: equipment_rest.create_repair_log
+      tags:
+        - Maintenance
+      summary: Create repair log for a machine
+      description: Create repair log for a machine
+      requestBody:
+        descripttion: Repair log to add
+        required: true
+        $ref: "#/components/requestBodies/NewRepairLogBody"
+      responses:
+        200:
+          description: Repair log successfully added to machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepairLog"
+        409:
+          description: Specified repair log machine does not exist
+    put:
+      operationId: equipment_rest.update_repair_log
+      tags:
+        - Maintenance
+      summary: Update a repair log
+      description: Update a repair log
+      requestBody:
+        description: Repair log info
+        required: true
+        $ref: "#/components/requestBodies/UpdateRepairLogBody"
+      responses:
+        200:
+          description: Repair log succesfully updated
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/RepairLog"
+        404:
+          description: Machine not found
+          $ref: "#/components/responses/NotFound"
+  /repair_log/{log_id}:
+    delete:
+      operationId: equipment_rest.delete_repair_log
+      tags:
+        - Maintenance
+      summary: Delete a repair log
+      description: Delete a repair log
+      parameters:
+        - name: log_id
+          in: path
+          description: ID of repair log to delete
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Repair log successfully deleted
+        404:
+          description: Repair log does not exist
+
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    RepairLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of repair log
+        machine_id:
+          type: integer
+          description: ID of associated machine
+        date:
+          type: string
+          description: Date of repair
+        description:
+          type: string
+          description: Description of the repair
+        part_name:
+          type: string
+          description: Name of the part used to make the repair
+        part_number:
+          type: string
+          description: Part number for part required to make the repair
+        part_cost:
+          type: number
+          format: double
+          description: Cost of the part
+        labor_cost:
+          type: number
+          format: double
+          description: Cost of any labor to make the repair
+
+    UpdateRepairLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of repair log
+        machine_id:
+          type: integer
+          description: ID of associated machine
+        date:
+          type: string
+          description: Date of repair
+        description:
+          type: string
+          description: Description of the repair
+        part_name:
+          type: string
+          description: Name of the part used to make the repair
+        part_number:
+          type: string
+          description: Part number for part required to make the repair
+        part_cost:
+          type: number
+          format: double
+          description: Cost of the part
+        labor_cost:
+          type: number
+          format: double
+          description: Cost of any labor to make the repair
+      required:
+        - id
+        - machine_id
+        - date
+        - description
+        - part_name
+        - part_number
+        - part_cost
+        - labor_cost
+
+    NewRepairLog:
+      type: object
+      properties:
+        machine_id:
+          type: integer
+          description: ID of the machine to which to attach this repair log
+        date:
+          type: string
+          description: Date of repair
+        description:
+          type: string
+          description: Description of the repair
+        part_name:
+          type: string
+          description: Name of the part used to make the repair
+        part_number:
+          type: string
+          description: Part number for part required to make the repair
+        part_cost:
+          type: number
+          format: double
+          description: Cost of the part
+        labor_cost:
+          type: number
+          format: double
+          description: Cost of any labor to make the repair
+      required:
+        - machine_id
+        - date
+        - description
+        - part_name
+
+    RepairLogList:
+      type: array
+      items:
+        $ref: "#/components/schemas/RepairLog"
+
+    Machine:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Machine ID
+        machine_type:
+          type: integer
+          description: 0 for washer, 1 for dryer
+        number:
+          type: integer
+        model:
+          type: string
+        serial:
+          type: string
+        active:
+          type: boolean
+        repair_logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/RepairLog"
+      required:
+        - id
+        - number
+        - active
+        - model
+        - serial
+        - machine_type
+
+    MachineList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Machine"
+
+    NewMachine:
+      type: object
+      properties:
+        number:
+          type: integer
+        model:
+          type: string
+        serial:
+          type: string
+      required:
+        - number
+        - model
+        - serial
+
+    UpdateMachine:
+      type: object
+      properties:
+        id:
+          type: integer
+        number:
+          type: integer
+        model:
+          type: string
+        serial:
+          type: string
+        active:
+          type: boolean
+      required:
+        - id
+
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+        status_code:
+          type: integer
+      required:
+        - detail
+        - status_code
+
+  requestBodies:
+    NewMachineBody:
+      description: JSON object containing machine information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NewMachine"
+
+    UpdateMachineBody:
+      description: JSON object containing machine information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateMachine"
+
+    MachineBody:
+      description: JSON object containing machine information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Machine"
+
+    NewRepairLogBody:
+      description: JSON object containing repair log information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NewRepairLog"
+
+    UpdateRepairLogBody:
+      description: JSON object containging repair log information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateRepairLog"
