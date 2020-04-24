@@ -202,3 +202,8 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+/create_db.cmd
+/load_db.cmd
+/run_app.cmd
+/run_tests.cmd
+/initial_data/
