@@ -66,22 +66,22 @@ def get_dryers(active_state):
 
 def create_washer(body):
     machine = _create_machine(body, WasherSchema, Washer, MachineType.Washer)
-    return WasherSchema().dump(machine), 200
+    return WasherSchema().dump(machine)
 
 
 def update_washer(body):
-    machine = _update_machine(body, Washer, MachineType.Washer)
-    return WasherSchema().dump(machine), 200
+    machine = _update_machine(body, Washer)
+    return WasherSchema().dump(machine)
 
 
 def create_dryer(body):
     machine = _create_machine(body, DryerSchema, Dryer, MachineType.Dryer)
-    return DryerSchema().dump(machine), 200
+    return DryerSchema().dump(machine)
 
 
 def update_dryer(body):
-    machine = _update_machine(body, Dryer, MachineType.Dryer)
-    return DryerSchema().dump(machine), 200
+    machine = _update_machine(body, Dryer)
+    return DryerSchema().dump(machine)
 
 
 def enable_machine(machine_id):
@@ -93,13 +93,14 @@ def enable_machine(machine_id):
     if machine is None:
         abort(404, "Specified machine does not exist")
 
-    # Make sure another machine with the same type and number is currently enabled.
+    # Make sure another machine with the same type and number is not currently enabled.
     # Only one machine of a specific number can be active at a time
     machines = Machine.query.filter(
         Machine.type == machine.type,
-        Machine.number == machine.number
+        Machine.number == machine.number,
+        Machine.active == True
     )
-    if len([machine for machine in machines]) > 1:
+    if len([machine for machine in machines]) > 0:
         abort(409, "Only one {} of that number can be active at a time".format(machine.type.name))
 
     machine.active = True
@@ -157,11 +158,18 @@ def read_dryer_by_number_include_disabled(number):
     return DryerSchema().dump(machine)
 
 
+def get_repair_log(log_id):
+    repair_log = db.session.query(RepairLog).get(log_id)
+    if repair_log is None:
+        abort(404, "Specified repair log does not exist")
+    return RepairLogSchema().dump(repair_log)
+
+
 def create_repair_log(body):
     with current_app.app_context():
         logger = current_app.logger
 
-    repair_log = RepairLogSchema().load(body)
+    repair_log = RepairLogSchema(unknown=EXCLUDE, dump_only=("id",)).load(body)
     machine = Machine.query.filter(Machine.id == repair_log.machine_id).one_or_none()
     if machine is None:
         abort(409, "Failed to create repair log. Specified machine does not exist.")
@@ -169,7 +177,7 @@ def create_repair_log(body):
     db.session.commit()
     updated_machine = db.session.query(Machine).get(repair_log.machine_id)
     logger.info("Created repair log for {} {}".format(updated_machine.type.name, updated_machine.number))
-    return RepairLogSchema().dump(repair_log), 200
+    return RepairLogSchema().dump(repair_log)
 
 
 def update_repair_log(body):
@@ -179,12 +187,17 @@ def update_repair_log(body):
     update_info = RepairLogSchema().load(body)
     existing = db.session.query(RepairLog).get(update_info.id)
     if existing is None:
-        abort(404, "Repair log does not exist")
+        abort(404, "Repair log({}) does not exist".format(update_info.id))
 
-    updated = db.session.merge(update_info)
+    existing.date = update_info.date
+    existing.description = update_info.description
+    existing.part_name = update_info.part_name
+    existing.part_number = update_info.part_number
+    existing.part_cost = update_info.part_cost
+    existing.labor_cost = update_info.labor_cost
     db.session.commit()
-    logger.info("Updated repair log({})".format(updated.id))
-    return RepairLogSchema().dump(updated), 200
+    logger.info("Updated repair log({})".format(existing.id))
+    return RepairLogSchema().dump(existing)
 
 
 def delete_repair_log(log_id):
@@ -222,31 +235,47 @@ def _create_machine(body, schema, machine_model, machine_type):
     return machine
 
 
-def _update_machine(body, machine_model, machine_type):
+def _update_machine(body, machine_model):
     with current_app.app_context():
         logger = current_app.logger
 
-    machine_id = body["id"]
-    existing = db.session.query(machine_model).get(machine_id)
-    if existing is None:
-        abort(404, "{} does not exist".format(machine_type.name))
+    schema = WasherSchema if machine_model is Washer else DryerSchema
+    update_info = schema(unknown=EXCLUDE, exclude=("type",)).load(body)
 
-    log_message = "Updated {} {}".format(machine_type.name, existing.number)
-    if existing.number != body["number"]:
+    existing = db.session.query(machine_model).get(update_info.id)
+    if existing is None:
+        abort(404, "{}({}) does not exist".format(update_info.type.name, update_info.id))
+
+    if update_info.active:
+        # Make sure another machine with the same type and number is not currently enabled.
+        # Only one machine of a specific number can be active at a time
+        machines = Machine.query.filter(
+            Machine.type == existing.type,
+            Machine.number == update_info.number,
+            Machine.active == True,
+            Machine.id != existing.id
+        )
+        if len([machine for machine in machines]) > 0:
+            abort(409, "Only one {} of that number can be active at a time".format(existing.type.name))
+
+    # Make sure we aren't changing the machine number to another machine number of an active machine
+    if existing.number != update_info.number:
         number_match_machine = machine_model.query.filter(
-            machine_model.number == body["number"],
-            machine_model.type == machine_type
+            machine_model.number == update_info.number,
+            machine_model.type == machine_model.type
         ).one_or_none()
         if number_match_machine is not None:
-            abort(409, "{} with that number already exists".format(machine_type.name))
+            abort(409, "{} with that number already exists".format(machine_model.type.name))
 
         existing.number = body["number"]
-        log_message = "Updated {} {} -> {}".format(machine_type.name, existing.number, body["number"])
+        log_message = "Updated {} {} -> {}".format(machine_model.type.name, existing.number, update_info.number)
+    else:
+        log_message = "Updated {} {}".format(machine_model.type.name, existing.number)
 
-    existing.serial = body["serial"]
-    existing.model = body["model"]
-    if "active" in body.keys():
-        existing.active = body["active"]
+    existing.serial = update_info.serial
+    existing.model = update_info.model
+    existing.description = update_info.description
+    existing.active = update_info.active
     db.session.commit()
 
     logger.info(log_message)

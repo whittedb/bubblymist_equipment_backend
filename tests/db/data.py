@@ -1,18 +1,18 @@
 EQUIPMENT = {
-    "Washer1": dict(number=1, model="20lb", serial="serw1", active=True),
-    "Washer2": dict(number=2, model="30lb", serial="serw2", active=True),
-    "Washer3": dict(number=3, model="40lb", serial="serw3", active=False),
-    "Washer4": dict(number=4, model="40lb", serial="serw3", active=True),
-    "Dryer1": dict(number=1, model="30Stack", serial="serd1", active=True),
-    "Dryer2": dict(number=2, model="50Stack", serial="serd2", active=True),
-    "Dryer3": dict(number=3, model="30Single", serial="serd3", active=False),
-    "Dryer4": dict(number=4, model="50Stack", serial="serd2", active=True),
+    "Washer1": dict(number=1, description="4 Loader", model="WCAD40KCB-12US", serial="21208000545445", active=True),
+    "Washer2": dict(number=2, description="3 Loader", model="WCAD30KCB-12US", serial="21208000545444", active=True),
+    "Washer3": dict(number=3, description="2 Loader", model="WCAD20KCB-12US", serial="21208000545446", active=False),
+    "Washer4": dict(number=4, description="4 Loader", model="WCAD40KCB-12US", serial="WCAD40KCB-12US", active=True),
+    "Dryer1": dict(number=1, description="50 Stack", model="DDBD50KCW-65US", serial="serd1", active=True),
+    "Dryer2": dict(number=2, description="30 Stack", model="DDAD30KCW-65US", serial="serd2", active=True),
+    "Dryer3": dict(number=3, description="30 Single", model="DCTD30KCW-10US", serial="serd3", active=False),
+    "Dryer4": dict(number=4, description="50 Stack", model="DDBD50KCW-65US", serial="serd2", active=True),
 }
 
 REPAIR_LOGS = {
     "Washer1": [
         dict(
-            date="04/01/2020",
+            date="2020-04-01",
             description="Replace drain valve",
             labor_cost=152.60,
             machine_id=1,
@@ -21,7 +21,7 @@ REPAIR_LOGS = {
             part_number="DV20"
         ),
         dict(
-            date="04/05/2020",
+            date="2020-04-05",
             description="Replace supply valve diaphragm",
             labor_cost=0,
             machine_id=1,
@@ -32,7 +32,7 @@ REPAIR_LOGS = {
     ],
     "Washer2": [
         dict(
-            date="03/01/2020",
+            date="2020-03-01",
             description="Replace door solenoid",
             labor_cost=0,
             machine_id=2,
@@ -41,7 +41,7 @@ REPAIR_LOGS = {
             part_number="DS"
         ),
         dict(
-            date="03/05/2020",
+            date="2020-03-05",
             description="Replace supply valve diaphragm",
             labor_cost=0,
             machine_id=2,
@@ -50,7 +50,7 @@ REPAIR_LOGS = {
             part_number="Diaphragm"
         ),
         dict(
-            date="03/15/2020",
+            date="2020-03-15",
             description="Replace motor",
             labor_cost=0,
             machine_id=2,

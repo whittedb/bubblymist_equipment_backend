@@ -16,6 +16,7 @@ def test_admin_delete_by_id(client):
     with client as c:
         new_machine = dict(
             number=1000,
+            description="Test admin create",
             model="30Stack Admin",
             serial="serd4-Admin"
         )

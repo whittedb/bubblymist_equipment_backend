@@ -14,6 +14,7 @@ class Machine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     repair_logs = db.relationship("RepairLog", back_populates="machine")
     type = db.Column(db.Enum(MachineType), nullable=False)
+    description = db.Column(db.String(32), nullable=False)
     number = db.Column(db.Integer, nullable=False)
     model = db.Column(db.String(32), nullable=False)
     serial = db.Column(db.String(64))

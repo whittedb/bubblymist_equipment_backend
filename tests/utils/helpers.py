@@ -34,9 +34,9 @@ def delete_by_db_id(client, uri, status_code=200):
     return response
 
 
-def enable_machine(client, clazz, number=None, machine_id=None, enable=True):
+def enable_machine(client, machine_type, number=None, machine_id=None, enable=True):
     if number is not None:
-        if clazz is Washer:
+        if machine_type == 0:
             uri = "/v1/washer/{}".format(number)
         else:
             uri = "/v1/dryer/{}".format(number)

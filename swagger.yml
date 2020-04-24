@@ -26,7 +26,7 @@ paths:
         200:
           description: Machine successfully deleted
         404:
-          description: Machine does not exist
+          $ref: '#/components/responses/NotFound'
 
   /equipment/{machine_id}:
     get:
@@ -48,10 +48,9 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Machine"
+                  $ref: '#/components/schemas/Machine'
         404:
-          description: Washer not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
   /equipment_list/{active_state}:
     get:
       operationId: equipment_rest.get_equipment
@@ -67,9 +66,9 @@ paths:
             enum: [all, active, inactive]
             description: >
               Active Status:
-                * "all" - All active and inactive
-                * "active" - Only active machines
-                * "inactive" - Only inactive machines
+                * 'all' - All active and inactive
+                * 'active' - Only active machines
+                * 'inactive' - Only inactive machines
           required: true
       responses:
         200:
@@ -77,7 +76,7 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/MachineList"
+                  $ref: '#/components/schemas/MachineList'
         400:
           description: Invalid parameter
   /equipment_enable/{machine_id}:
@@ -100,10 +99,9 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Machine"
+                  $ref: '#/components/schemas/Machine'
         404:
-          description: Machine not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
         409:
           description: Machine of that type and  with that number is already active
   /equipment_disable/{machine_id}:
@@ -126,10 +124,9 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Machine"
+                  $ref: '#/components/schemas/Machine'
         404:
-          description: Machine not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
 
   /washer_list/{active_state}:
     get:
@@ -152,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MachineList"
+                $ref: '#/components/schemas/MachineList'
         400:
           description: Invalid parameter
   /washer/{number}:
@@ -175,10 +172,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Machine"
+                $ref: '#/components/schemas/Machine'
         404:
-          description: Washer not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
   /washer:
     post:
       operationId: equipment_rest.create_washer
@@ -187,16 +183,14 @@ paths:
       summary: Create a new washer
       description: Create a new washer
       requestBody:
-        description: Washer to add
-        required: true
-        $ref: "#/components/requestBodies/NewMachineBody"
+        $ref: '#/components/requestBodies/NewMachineBody'
       responses:
         200:
           description: Successfully created new washer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Machine"
+                $ref: '#/components/schemas/Machine'
         409:
           description: That washer already exists
     put:
@@ -206,18 +200,16 @@ paths:
       summary: Update a washer
       description: Update a washer
       requestBody:
-        description: Washer to update
-        required: true
-        $ref: "#/components/requestBodies/UpdateMachineBody"
+        $ref: '#/components/requestBodies/UpdateMachineBody'
       responses:
         200:
           description: Successfully updated washer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Machine"
+                $ref: '#/components/schemas/Machine'
         404:
-          description: Washer with ID doesn't exist
+          $ref: '#/components/responses/NotFound'
         409:
           description: That washer already exists
 
@@ -242,7 +234,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MachineList"
+                $ref: '#/components/schemas/MachineList'
         400:
           description: Invalid parameter
   /dryer/{number}:
@@ -265,10 +257,9 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Machine"
+                  $ref: '#/components/schemas/Machine'
         404:
-          description: Dryer not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
   /dryer:
     post:
       operationId: equipment_rest.create_dryer
@@ -277,16 +268,14 @@ paths:
       summary: Create a new dryer
       description: Create a new dryer
       requestBody:
-        description: Dryer to add
-        required: true
-        $ref: "#/components/requestBodies/NewMachineBody"
+        $ref: '#/components/requestBodies/NewMachineBody'
       responses:
         200:
           description: Successfully created new dryer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Machine"
+                $ref: '#/components/schemas/Machine'
         409:
           description: Dryer already exists
     put:
@@ -296,18 +285,16 @@ paths:
       summary: Update a dryer
       description: Update a dryer
       requestBody:
-        description: Dryer to update
-        required: true
-        $ref: "#/components/requestBodies/UpdateMachineBody"
+        $ref: '#/components/requestBodies/UpdateMachineBody'
       responses:
         200:
           description: Successfully updated dryer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Machine"
+                $ref: '#/components/schemas/Machine'
         404:
-          description: Dryer with ID doesn't exist
+          $ref: '#/components/responses/NotFound'
         409:
           description: That Dryer already exists
 
@@ -319,16 +306,14 @@ paths:
       summary: Create repair log for a machine
       description: Create repair log for a machine
       requestBody:
-        descripttion: Repair log to add
-        required: true
-        $ref: "#/components/requestBodies/NewRepairLogBody"
+        $ref: '#/components/requestBodies/NewRepairLogBody'
       responses:
         200:
           description: Repair log successfully added to machine
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RepairLog"
+                $ref: '#/components/schemas/RepairLog'
         409:
           description: Specified repair log machine does not exist
     put:
@@ -338,20 +323,31 @@ paths:
       summary: Update a repair log
       description: Update a repair log
       requestBody:
-        description: Repair log info
-        required: true
-        $ref: "#/components/requestBodies/UpdateRepairLogBody"
+        $ref: '#/components/requestBodies/UpdateRepairLogBody'
       responses:
         200:
-          description: Repair log succesfully updated
-          content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/RepairLog"
+          $ref: '#/components/responses/RepairLogResponse'
         404:
-          description: Machine not found
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
   /repair_log/{log_id}:
+    get:
+      operationId: equipment_rest.get_repair_log
+      tags:
+        - Maintenance
+      summary: Get a repair log by ID
+      parameters:
+        - name: log_id
+          in: path
+          required: true
+          description: ID of repair log to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/RepairLogResponse'
+        404:
+          $ref: '#/components/responses/NotFound'
+                
     delete:
       operationId: equipment_rest.delete_repair_log
       tags:
@@ -361,25 +357,17 @@ paths:
       parameters:
         - name: log_id
           in: path
+          required: true
           description: ID of repair log to delete
           schema:
             type: integer
-          required: true
       responses:
         200:
           description: Repair log successfully deleted
         404:
-          description: Repair log does not exist
+          $ref: '#/components/responses/NotFound'
 
 components:
-  responses:
-    NotFound:
-      description: The specified resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-
   schemas:
     RepairLog:
       type: object
@@ -417,9 +405,6 @@ components:
         id:
           type: integer
           description: ID of repair log
-        machine_id:
-          type: integer
-          description: ID of associated machine
         date:
           type: string
           description: Date of repair
@@ -442,11 +427,10 @@ components:
           description: Cost of any labor to make the repair
       required:
         - id
-        - machine_id
         - date
         - description
-        - part_name
         - part_number
+        - part_name
         - part_cost
         - labor_cost
 
@@ -481,11 +465,14 @@ components:
         - date
         - description
         - part_name
+        - part_number
+        - part_cost
+        - labor_cost
 
     RepairLogList:
       type: array
       items:
-        $ref: "#/components/schemas/RepairLog"
+        $ref: '#/components/schemas/RepairLog'
 
     Machine:
       type: object
@@ -498,6 +485,8 @@ components:
           description: 0 for washer, 1 for dryer
         number:
           type: integer
+        description:
+          type: string
         model:
           type: string
         serial:
@@ -507,9 +496,10 @@ components:
         repair_logs:
           type: array
           items:
-            $ref: "#/components/schemas/RepairLog"
+            $ref: '#/components/schemas/RepairLog'
       required:
         - id
+        - description
         - number
         - active
         - model
@@ -519,19 +509,22 @@ components:
     MachineList:
       type: array
       items:
-        $ref: "#/components/schemas/Machine"
+        $ref: '#/components/schemas/Machine'
 
     NewMachine:
       type: object
       properties:
         number:
           type: integer
+        description:
+          type: string
         model:
           type: string
         serial:
           type: string
       required:
         - number
+        - description
         - model
         - serial
 
@@ -540,8 +533,12 @@ components:
       properties:
         id:
           type: integer
+        type:
+          type: integer
         number:
           type: integer
+        description:
+          type: string
         model:
           type: string
         serial:
@@ -550,6 +547,12 @@ components:
           type: boolean
       required:
         - id
+        - type
+        - description
+        - model
+        - number
+        - serial
+        - active
 
     Error:
       type: object
@@ -569,7 +572,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/NewMachine"
+            $ref: '#/components/schemas/NewMachine'
 
     UpdateMachineBody:
       description: JSON object containing machine information
@@ -577,7 +580,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UpdateMachine"
+            $ref: '#/components/schemas/UpdateMachine'
 
     MachineBody:
       description: JSON object containing machine information
@@ -585,7 +588,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Machine"
+            $ref: '#/components/schemas/Machine'
 
     NewRepairLogBody:
       description: JSON object containing repair log information
@@ -593,7 +596,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/NewRepairLog"
+            $ref: '#/components/schemas/NewRepairLog'
 
     UpdateRepairLogBody:
       description: JSON object containging repair log information
@@ -601,4 +604,19 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UpdateRepairLog"
+            $ref: '#/components/schemas/UpdateRepairLog'
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    RepairLogResponse:
+      description: The repair log
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RepairLog'

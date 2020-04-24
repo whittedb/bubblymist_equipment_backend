@@ -7,7 +7,7 @@ from db.models import Machine, Washer, Dryer, RepairLog
 class RepairLogSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = RepairLog
-        dateformat = "%m/%d/%Y"
+        dateformat = "%Y-%m-%d"
 
     machine_id = ma.Integer()
 
