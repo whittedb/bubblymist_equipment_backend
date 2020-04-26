@@ -5,8 +5,8 @@ import logging.config
 import csv
 import glob
 import argparse
-from app import create_app, db
-from db.models import Washer, Dryer, RepairLog
+from application import create_app, db
+from application.models import Washer, Dryer, RepairLog
 
 
 with open("application/logging.json") as config_data:

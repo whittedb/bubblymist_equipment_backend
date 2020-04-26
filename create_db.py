@@ -1,4 +1,4 @@
-from app import create_app, db
+from application import create_app, db
 from alembic.config import Config
 from alembic import command
 
