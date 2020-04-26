@@ -1,4 +1,4 @@
-from db.models import Washer
+from application.models import Washer
 
 
 def get(client, uri, status_code=200):

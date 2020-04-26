@@ -1,9 +1,10 @@
 from enum import Enum, auto
 from flask import abort, current_app
 from marshmallow import EXCLUDE
-from app import db
-from db.models import Machine, Washer, Dryer, MachineType, RepairLog
-from models import MachineSchema, WasherSchema, DryerSchema, RepairLogSchema
+from . import db, ma
+from .models import (Machine, Washer, Dryer, MachineType, RepairLog,
+                     MachineSchema, WasherSchema, DryerSchema, RepairLogSchema
+                     )
 
 
 class ActiveState(Enum):
@@ -85,8 +86,7 @@ def update_dryer(body):
 
 
 def enable_machine(machine_id):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     # Does the machine exist?
     machine = db.session.query(Machine).get(machine_id)
@@ -105,13 +105,12 @@ def enable_machine(machine_id):
 
     machine.active = True
     db.session.commit()
-    logger.info("Enabled {} {}".format(machine.type.name, machine.number))
+    logger.debug("Enabled {} {}".format(machine.type.name, machine.number))
     return 200
 
 
 def disable_machine(machine_id):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     # Does the machine exist?
     machine = db.session.query(Machine).get(machine_id)
@@ -120,7 +119,7 @@ def disable_machine(machine_id):
 
     machine.active = False
     db.session.commit()
-    logger.info("Disabled {} {}".format(machine.type.name, machine.number))
+    logger.debug("Disabled {} {}".format(machine.type.name, machine.number))
     return 200
 
 
@@ -166,8 +165,7 @@ def get_repair_log(log_id):
 
 
 def create_repair_log(body):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     repair_log = RepairLogSchema(unknown=EXCLUDE, dump_only=("id",)).load(body)
     machine = Machine.query.filter(Machine.id == repair_log.machine_id).one_or_none()
@@ -176,13 +174,12 @@ def create_repair_log(body):
     db.session.add(repair_log)
     db.session.commit()
     updated_machine = db.session.query(Machine).get(repair_log.machine_id)
-    logger.info("Created repair log for {} {}".format(updated_machine.type.name, updated_machine.number))
+    logger.debug("Created repair log for {} {}".format(updated_machine.type.name, updated_machine.number))
     return RepairLogSchema().dump(repair_log)
 
 
 def update_repair_log(body):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     update_info = RepairLogSchema().load(body)
     existing = db.session.query(RepairLog).get(update_info.id)
@@ -196,13 +193,12 @@ def update_repair_log(body):
     existing.part_cost = update_info.part_cost
     existing.labor_cost = update_info.labor_cost
     db.session.commit()
-    logger.info("Updated repair log({})".format(existing.id))
+    logger.debug("Updated repair log({})".format(existing.id))
     return RepairLogSchema().dump(existing)
 
 
 def delete_repair_log(log_id):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     repair_log = db.session.query(RepairLog).get(log_id)
     if repair_log is None:
@@ -211,13 +207,12 @@ def delete_repair_log(log_id):
     machine = db.session.query(Machine).get(repair_log.machine_id)
     db.session.delete(repair_log)
     db.session.commit()
-    logger.info("Deleted repair log for {} {}".format(machine.type.name, machine.number))
+    logger.debug("Deleted repair log for {} {}".format(machine.type.name, machine.number))
     return 200
 
 
 def _create_machine(body, schema, machine_model, machine_type):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     number = body["number"]
     existing = db.session.query(machine_model).filter(
@@ -231,13 +226,12 @@ def _create_machine(body, schema, machine_model, machine_type):
     machine = schema(unknown=EXCLUDE, exclude=("type",), partial=("active", "type", "id"), dump_only=("id",)).load(body)
     db.session.add(machine)
     db.session.commit()
-    logger.info("Created {} {}".format(machine_type.name, machine.number))
+    logger.debug("Created {} {}".format(machine_type.name, machine.number))
     return machine
 
 
 def _update_machine(body, machine_model):
-    with current_app.app_context():
-        logger = current_app.logger
+    logger = current_app.logger
 
     schema = WasherSchema if machine_model is Washer else DryerSchema
     update_info = schema(unknown=EXCLUDE, exclude=("type",)).load(body)
@@ -268,9 +262,9 @@ def _update_machine(body, machine_model):
             abort(409, "{} with that number already exists".format(machine_model.type.name))
 
         existing.number = body["number"]
-        log_message = "Updated {} {} -> {}".format(machine_model.type.name, existing.number, update_info.number)
+        log_message = "Updated {} {} -> {}".format(existing.type.name, existing.number, update_info.number)
     else:
-        log_message = "Updated {} {}".format(machine_model.type.name, existing.number)
+        log_message = "Updated {} {}".format(existing.type.name, existing.number)
 
     existing.serial = update_info.serial
     existing.model = update_info.model
@@ -278,5 +272,5 @@ def _update_machine(body, machine_model):
     existing.active = update_info.active
     db.session.commit()
 
-    logger.info(log_message)
+    logger.debug(log_message)
     return existing

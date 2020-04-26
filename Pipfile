@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+pytest-flask = "*"
 
 [packages]
 flask = "*"
@@ -17,6 +18,10 @@ cryptography = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 marshmallow-enum = "*"
+requests="*"
+oauthlib="*"
+pyOpenSSL="*"
+Flask-Login="*"
 
 [requires]
 python_version = "3.8"

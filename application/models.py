@@ -1,5 +1,7 @@
-from db import db
 from enum import Enum
+from marshmallow import post_load
+from marshmallow_enum import EnumField
+from application import db, ma
 
 
 class MachineType(Enum):
@@ -27,7 +29,6 @@ class Machine(db.Model):
 
     def __init__(self, active=True, **kwargs):
         super().__init__(active=active, **kwargs)
-        self._active = active if active is not None and isinstance(active, bool) else False
 
     def __repr__(self):
         return "{}:{}:{}:{}:{}:{}".format(
@@ -64,3 +65,67 @@ class RepairLog(db.Model):
     part_number = db.Column(db.String(64))
     part_cost = db.Column(db.Numeric(10, 2), default=0)
     labor_cost = db.Column(db.Numeric(10, 2), default=0)
+
+
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(32), nullable=False)
+    admin = db.Column(db.Boolean, nullable=False)
+
+    def __init__(self, active=True, **kwargs):
+        super().__init__(active=active, **kwargs)
+
+    def __repr__(self):
+        return "{}:{}:{}".format(self.id, self.email, self.admin)
+
+
+class RepairLogSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = RepairLog
+        dateformat = "%Y-%m-%d"
+
+    machine_id = ma.Integer()
+
+    @post_load
+    def make_repair_log(self, data, **kwargs):
+        return RepairLog(**data)
+
+
+class MachineSchema(ma.SQLAlchemyAutoSchema):
+    type = EnumField(Machine, by_value=True)
+
+    class Meta:
+        model = Machine
+        include_relationships = True
+
+    repair_logs = ma.List(ma.Nested(RepairLogSchema))
+
+
+class WasherSchema(ma.SQLAlchemyAutoSchema):
+    type = EnumField(Machine, by_value=True)
+
+    class Meta:
+        model = Washer
+        include_relationships = True
+
+    repair_logs = ma.List(ma.Nested(RepairLogSchema))
+
+    @post_load
+    def make_machine(self, data, **kwargs):
+        return Washer(**data)
+
+
+class DryerSchema(ma.SQLAlchemyAutoSchema):
+    type = EnumField(Machine, by_value=True)
+
+    class Meta:
+        model = Dryer
+        include_relationships = True
+        include_fk = True
+
+    repair_logs = ma.List(ma.Nested(RepairLogSchema))
+
+    @post_load
+    def make_machine(self, data, **kwargs):
+        return Dryer(**data)

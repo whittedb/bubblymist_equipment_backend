@@ -9,7 +9,7 @@ from app import create_app, db
 from db.models import Washer, Dryer, RepairLog
 
 
-with open("logging.json") as config_data:
+with open("application/logging.json") as config_data:
     json_config = json.load(config_data)
 logging.config.dictConfig(json_config)
 logger = logging.getLogger(__name__)

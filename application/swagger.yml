@@ -10,6 +10,7 @@ servers:
 paths:
   /admin/equipment/{machine_id}:
     delete:
+      x-openapi-router-controller: application
       operationId: equipment_admin_rest.delete_machine
       tags:
         - Admin
@@ -30,6 +31,7 @@ paths:
 
   /equipment/{machine_id}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_machine_by_id
       tags:
         - Equipment
@@ -53,6 +55,7 @@ paths:
           $ref: '#/components/responses/NotFound'
   /equipment_list/{active_state}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_equipment
       tags:
         - Equipment
@@ -81,6 +84,7 @@ paths:
           description: Invalid parameter
   /equipment_enable/{machine_id}:
     put:
+      x-openapi-router-controller: application
       operationId: equipment_rest.enable_machine
       tags:
         - Equipment
@@ -106,6 +110,7 @@ paths:
           description: Machine of that type and  with that number is already active
   /equipment_disable/{machine_id}:
     put:
+      x-openapi-router-controller: application
       operationId: equipment_rest.disable_machine
       tags:
         - Equipment
@@ -130,6 +135,7 @@ paths:
 
   /washer_list/{active_state}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_washers
       tags:
         - Equipment
@@ -154,6 +160,7 @@ paths:
           description: Invalid parameter
   /washer/{number}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_washer_by_number
       tags:
         - Equipment
@@ -177,6 +184,7 @@ paths:
           $ref: '#/components/responses/NotFound'
   /washer:
     post:
+      x-openapi-router-controller: application
       operationId: equipment_rest.create_washer
       tags:
         - Equipment
@@ -194,6 +202,7 @@ paths:
         409:
           description: That washer already exists
     put:
+      x-openapi-router-controller: application
       operationId: equipment_rest.update_washer
       tags:
         - Equipment
@@ -215,6 +224,7 @@ paths:
 
   /dryer_list/{active_state}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_dryers
       tags:
         - Equipment
@@ -239,6 +249,7 @@ paths:
           description: Invalid parameter
   /dryer/{number}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_dryer_by_number
       tags:
         - Equipment
@@ -262,6 +273,7 @@ paths:
           $ref: '#/components/responses/NotFound'
   /dryer:
     post:
+      x-openapi-router-controller: application
       operationId: equipment_rest.create_dryer
       tags:
         - Equipment
@@ -279,6 +291,7 @@ paths:
         409:
           description: Dryer already exists
     put:
+      x-openapi-router-controller: application
       operationId: equipment_rest.update_dryer
       tags:
         - Equipment
@@ -300,6 +313,7 @@ paths:
 
   /repair_log:
     post:
+      x-openapi-router-controller: application
       operationId: equipment_rest.create_repair_log
       tags:
         - Maintenance
@@ -317,6 +331,7 @@ paths:
         409:
           description: Specified repair log machine does not exist
     put:
+      x-openapi-router-controller: application
       operationId: equipment_rest.update_repair_log
       tags:
         - Maintenance
@@ -331,6 +346,7 @@ paths:
           $ref: '#/components/responses/NotFound'
   /repair_log/{log_id}:
     get:
+      x-openapi-router-controller: application
       operationId: equipment_rest.get_repair_log
       tags:
         - Maintenance
@@ -349,6 +365,7 @@ paths:
           $ref: '#/components/responses/NotFound'
                 
     delete:
+      x-openapi-router-controller: application
       operationId: equipment_rest.delete_repair_log
       tags:
         - Maintenance
