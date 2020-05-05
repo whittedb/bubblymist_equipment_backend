@@ -1,10 +1,11 @@
 from enum import Enum, auto
 from flask import abort, current_app
+from connexion import request
 from marshmallow import EXCLUDE
-from . import db, ma
-from .models import (Machine, Washer, Dryer, MachineType, RepairLog,
-                     MachineSchema, WasherSchema, DryerSchema, RepairLogSchema
-                     )
+from application import db
+from application.models import (Machine, Washer, Dryer, MachineType, RepairLog,
+                                MachineSchema, WasherSchema, DryerSchema, RepairLogSchema
+                                )
 
 
 class ActiveState(Enum):

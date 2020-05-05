@@ -3,8 +3,8 @@ import logging.config
 import json
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import connexion
 from flask_marshmallow import Marshmallow
+import connexion
 from application.exceptions import MissingEnvironmentValueException
 
 with open("./application/logging.json") as config_data:
@@ -14,10 +14,14 @@ logging.config.dictConfig(json_config)
 db = SQLAlchemy()
 ma = Marshmallow()
 
+_environment = os.environ.get("ENV", "development")
+
 
 def create_app(config=None):
     # Create the application instance
     _app = connexion.App(__name__, specification_dir='./')
+    _app.app.secret_key = b'21\x08\xa8\x84\x16\xcd\xb0[\xedL\xa5b\x04J,'
+
     if config is None:
         #    _app.app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://bm_apps:1grogme2@localhost/machine_info_test"
         _app.app.config["SQLALCHEMY_DATABASE_URI"] = _get_db_uri()
@@ -28,7 +32,10 @@ def create_app(config=None):
 
     db.init_app(_app.app)
     ma.init_app(_app.app)
-    CORS(_app.app)
+    if _environment == "development":
+        CORS(_app.app, origins="http://localhost:8080", supports_credentials=True)
+    else:
+        CORS(_app.app)
 
     with _app.app.app_context():
         # Build the SQLAlchemy models

@@ -1,6 +1,6 @@
 from flask import abort, current_app
-from . import db
-from .models import Machine
+from application import db
+from application.models import Machine
 
 
 def delete_machine(machine_id):

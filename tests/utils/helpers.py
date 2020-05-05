@@ -1,15 +1,17 @@
-from application.models import Washer
+import base64
+api_key = "MUINxyUUB3lMH4r1vIkZUSCroUGQ_J6DF9jNF0axEIE"
+print("API Key: {}\n".format(api_key))
 
 
 def get(client, uri, status_code=200):
-    response = client.get(uri)
+    response = client.get(uri, headers={"X-API-Key": api_key})
     assert response.status_code == status_code
     return response
 
 
 def post(client, uri, body=None, status_code=200):
     if body is not None:
-        response = client.post(uri, json=body)
+        response = client.post(uri, json=body, headers={"X-API-Key": api_key})
     else:
         response = client.post(uri)
     assert response.status_code == status_code
@@ -17,19 +19,19 @@ def post(client, uri, body=None, status_code=200):
 
 
 def put(client, uri, status_code=200, body=None):
-    response = client.put(uri, json=body)
+    response = client.put(uri, json=body, headers={"X-API-Key": api_key})
     assert response.status_code == status_code
     return response
 
 
 def delete(client, uri, status_code=200):
-    response = client.delete(uri)
+    response = client.delete(uri, headers={"X-API-Key": api_key})
     assert response.status_code == status_code
     return response
 
 
 def delete_by_db_id(client, uri, status_code=200):
-    response = client.delete(uri)
+    response = client.delete(uri, headers={"X-API-Key": api_key})
     assert response.status_code == status_code
     return response
 

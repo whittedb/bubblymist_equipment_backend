@@ -1,5 +1,6 @@
 from enum import Enum
 from marshmallow import post_load
+from marshmallow import fields, Schema
 from marshmallow_enum import EnumField
 from application import db, ma
 
@@ -70,14 +71,13 @@ class RepairLog(db.Model):
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(32), nullable=False)
+    google_email = db.Column(db.String(64))
+    facebook_email = db.Column(db.String(64))
+    refresh_token = db.Column(db.String(512))
     admin = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, active=True, **kwargs):
-        super().__init__(active=active, **kwargs)
-
     def __repr__(self):
-        return "{}:{}:{}".format(self.id, self.email, self.admin)
+        return "{}:{}:{}:{}".format(self.id, self.google_email, self.facebook_email, self.admin)
 
 
 class RepairLogSchema(ma.SQLAlchemyAutoSchema):
@@ -129,3 +129,26 @@ class DryerSchema(ma.SQLAlchemyAutoSchema):
     @post_load
     def make_machine(self, data, **kwargs):
         return Dryer(**data)
+
+
+class RefreshToken(object):
+    def __init__(self, grant_type, refresh_token):
+        self._grant_type = grant_type
+        self._refresh_token = refresh_token
+
+    @property
+    def grant_type(self):
+        return self._grant_type
+
+    @property
+    def refresh_token(self):
+        return self._refresh_token
+
+
+class RefreshTokenRequest(Schema):
+    grant_type = fields.String()
+    refresh_token = fields.String()
+
+    @post_load
+    def make_refresh_token(self, data, **kwargs):
+        return RefreshToken(**data)

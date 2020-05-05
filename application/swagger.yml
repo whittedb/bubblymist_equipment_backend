@@ -4,13 +4,64 @@ info:
   description: This is the swagger file that goes with our server code
   version: 0.0.1
 servers:
-  - url: /v1
+  - url: /{api_version}
+    description: Development server
+    variables:
+      server:
+        default: http://localhost
+      api_version:
+        default: v1
+        enum:
+          - v1
+      environment:
+        default: apidev
+        enum:
+          - api
+          - apidev
+          - apistaging
+      port:
+        default: '5000'
 
 # Paths supported by the server application
+security:
+  - MasterKeyAuth: []
+  - ApiAuthToken: []
+
 paths:
+  /login:
+    post:
+      x-openapi-router-controller: application.auth
+      security:
+        - LoginAuthToken: []
+      operationId: api.login
+      tags:
+        - Authentication
+      responses:
+        200:
+          $ref: '#/components/responses/LoginResponse'
+  /logout:
+    post:
+      x-openapi-router-controller: application.auth
+      operationId: api.logout
+      tags:
+        - Authentication
+      responses:
+        200:
+          $ref: '#/components/responses/LoginResponse'
+
+  /refresh:
+    get:
+      x-openapi-router-controller: application.auth
+      operationId: api.refresh
+      tags:
+        - Authentication
+      responses:
+        200:
+          $ref: '#/components/responses/LoginResponse'
+
   /admin/equipment/{machine_id}:
     delete:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_admin_rest.delete_machine
       tags:
         - Admin
@@ -26,12 +77,14 @@ paths:
       responses:
         200:
           description: Machine successfully deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
 
   /equipment/{machine_id}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_machine_by_id
       tags:
         - Equipment
@@ -51,11 +104,13 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
   /equipment_list/{active_state}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_equipment
       tags:
         - Equipment
@@ -80,11 +135,13 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/MachineList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         400:
           description: Invalid parameter
   /equipment_enable/{machine_id}:
     put:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.enable_machine
       tags:
         - Equipment
@@ -104,13 +161,15 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
         409:
           description: Machine of that type and  with that number is already active
   /equipment_disable/{machine_id}:
     put:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.disable_machine
       tags:
         - Equipment
@@ -130,12 +189,14 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
 
   /washer_list/{active_state}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_washers
       tags:
         - Equipment
@@ -156,11 +217,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MachineList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         400:
           description: Invalid parameter
   /washer/{number}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_washer_by_number
       tags:
         - Equipment
@@ -180,11 +243,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
   /washer:
     post:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.create_washer
       tags:
         - Equipment
@@ -199,10 +264,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         409:
           description: That washer already exists
     put:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.update_washer
       tags:
         - Equipment
@@ -217,6 +284,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
         409:
@@ -224,7 +293,7 @@ paths:
 
   /dryer_list/{active_state}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_dryers
       tags:
         - Equipment
@@ -245,11 +314,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MachineList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         400:
           description: Invalid parameter
   /dryer/{number}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_dryer_by_number
       tags:
         - Equipment
@@ -269,11 +340,13 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
   /dryer:
     post:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.create_dryer
       tags:
         - Equipment
@@ -288,10 +361,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         409:
           description: Dryer already exists
     put:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.update_dryer
       tags:
         - Equipment
@@ -306,6 +381,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Machine'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
         409:
@@ -313,7 +390,7 @@ paths:
 
   /repair_log:
     post:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.create_repair_log
       tags:
         - Maintenance
@@ -328,10 +405,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RepairLog'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         409:
           description: Specified repair log machine does not exist
     put:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.update_repair_log
       tags:
         - Maintenance
@@ -342,11 +421,13 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/RepairLogResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
   /repair_log/{log_id}:
     get:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.get_repair_log
       tags:
         - Maintenance
@@ -361,11 +442,13 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/RepairLogResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
                 
     delete:
-      x-openapi-router-controller: application
+      x-openapi-router-controller: application.api
       operationId: equipment_rest.delete_repair_log
       tags:
         - Maintenance
@@ -381,10 +464,29 @@ paths:
       responses:
         200:
           description: Repair log successfully deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
 
 components:
+  securitySchemes:
+    MasterKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+      x-apikeyInfoFunc: application.auth.api.master_key_auth
+    LoginAuthToken:
+      type: apiKey
+      name: X-Login-Token
+      in: header
+      x-apikeyInfoFunc: application.auth.api.login_auth
+    ApiAuthToken:
+      type: apiKey
+      name: X-API-Token
+      in: header
+      x-apikeyInfoFunc: application.auth.api.api_auth
+
   schemas:
     RepairLog:
       type: object
@@ -616,7 +718,7 @@ components:
             $ref: '#/components/schemas/NewRepairLog'
 
     UpdateRepairLogBody:
-      description: JSON object containging repair log information
+      description: JSON object containing repair log information
       required: true
       content:
         application/json:
@@ -631,9 +733,32 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
+    UnauthorizedError:
+      description: API key is missing or invalid
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+
     RepairLogResponse:
       description: The repair log
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/RepairLog'
+
+    LoginResponse:
+      description: JWT access token information
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                format: 'date-time'
+                description: Api Token
+              expiry:
+                type: date
+                description: Date and time that the access token expires
+
