@@ -1,6 +1,7 @@
 import datetime
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from facebook import GraphAPI, GraphAPIError
 from flask import current_app, abort, jsonify, make_response
 import jwt
 from connexion import request
@@ -40,9 +41,9 @@ def login_auth(token, **kwargs):
 
                 # ID token is valid. Check email against database
                 facebook_email = id_info["email"]
-            except ValueError as fb_error:
-                # Invalid token
-                current_app.logger.info("Problem with authorization token: {}, {}".format(google_error, fb_error))
+            except GraphAPIError as fb_error:
+                # Error accessing Facebook graph API
+                current_app.logger.info("Problem with authorization token: {},{}".format(google_error, fb_error))
                 return None
 
         query_param = User.google_email if google_email is not None else User.facebook_email
@@ -169,8 +170,8 @@ def _validate_google_auth(token):
 
 # Validate a Facebook user credentials object
 def _validate_facebook_auth(token):
-    raise ValueError("Facebook Login Not Implemented")
-#    return {}
+    profile = GraphAPI(token).get_object("me", **dict({"scope": "email", "fields": "id,name,email"}))
+    return profile
 
 
 def _generate_access_token(user_id):

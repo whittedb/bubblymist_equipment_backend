@@ -24,6 +24,7 @@ requests="*"
 httplib2="*"
 oauth2client="*"
 google-auth="*"
+facebook-sdk="*"
 PyJWT="*"
 
 [requires]
