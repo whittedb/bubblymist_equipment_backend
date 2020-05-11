@@ -3,3 +3,4 @@
 .gitignore export-ignore
 *.cmd export-ignore
 /.idea export-ignore
+load_data.py
