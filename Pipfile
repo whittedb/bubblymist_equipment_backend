@@ -26,6 +26,7 @@ oauth2client="*"
 google-auth="*"
 facebook-sdk="*"
 PyJWT="*"
+gunicorn="*"
 
 [requires]
 python_version = "3.7"
