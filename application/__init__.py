@@ -1,20 +1,12 @@
 import os
-import logging.config
-import json
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 import connexion
 from application.exceptions import MissingEnvironmentValueException
 
-with open("./application/logging.json") as config_data:
-    json_config = json.load(config_data)
-logging.config.dictConfig(json_config)
-
 db = SQLAlchemy()
 ma = Marshmallow()
-
-_environment = os.environ.get("ENV", "development")
 
 
 def create_app(config=None):
@@ -32,7 +24,7 @@ def create_app(config=None):
 
     db.init_app(_app.app)
     ma.init_app(_app.app)
-    if _environment == "development":
+    if os.environ.get("ENV", "development") == "development":
         CORS(_app.app, origins="http://localhost:8080", supports_credentials=True)
     else:
         CORS(_app.app)
