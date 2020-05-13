@@ -1,6 +1,5 @@
 from enum import Enum, auto
 from flask import abort, current_app
-from connexion import request
 from marshmallow import EXCLUDE
 from application import db
 from application.models import (Machine, Washer, Dryer, MachineType, RepairLog,

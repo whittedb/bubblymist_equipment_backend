@@ -3,9 +3,11 @@ info:
   title: Bubbly Mist Equipment
   description: This is the swagger file that goes with our server code
   version: 0.0.1
+
+# Paths supported by the server application
 servers:
-  - url: /{api_version}
-    description: Development server
+  - url: http://localhost:5000/{api_version}
+    description: Development Server
     variables:
       server:
         default: http://localhost
@@ -13,16 +15,18 @@ servers:
         default: v1
         enum:
           - v1
-      environment:
-        default: apidev
-        enum:
-          - api
-          - apidev
-          - apistaging
       port:
         default: '5000'
+  - url: https://equipment.bubblymist.com/{api_version}
+    description: Production Server
+    variables:
+      server:
+        default: https://equipment.bubblymist.com
+      api_version:
+        default: v1
+        enum:
+          - v1
 
-# Paths supported by the server application
 security:
   - MasterKeyAuth: []
   - ApiAuthToken: []
@@ -59,6 +63,21 @@ paths:
         200:
           $ref: '#/components/responses/LoginResponse'
 
+  /admin/createdb:
+    post:
+      summary: Create the initial DB tables and users
+      description: Created the initial DB tables and users
+      x-openapi-router-controller: application.api
+      operationId: equipment_admin_rest.create_db
+      tags:
+        - Admin
+      responses:
+        200:
+          description: DB tables and users created successfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFound'
   /admin/equipment/{machine_id}:
     delete:
       x-openapi-router-controller: application.api
