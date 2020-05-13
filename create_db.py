@@ -8,9 +8,10 @@ app = create_app()
 ctx = app.app.app_context()
 ctx.push()
 db.create_all()
-db.session.add(User(google_email="whittedbrad@gmail.com", facebook_email="fb@the-zoo.net", admin=True))
-db.session.add(User(google_email="mlwhitted@gmail.com", facebook_email="michilini_10@yahoo.com", admin=False))
-db.session.commit()
+if db.session.query(User).count() == 0:
+    db.session.add(User(google_email="whittedbrad@gmail.com", facebook_email="fb@the-zoo.net", admin=True))
+    db.session.add(User(google_email="mlwhitted@gmail.com", facebook_email="michilini_10@yahoo.com", admin=False))
+    db.session.commit()
 ctx.pop()
 
 # load the Alembic configuration and generate the

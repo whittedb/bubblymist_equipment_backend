@@ -4,4 +4,3 @@
 *.cmd export-ignore
 /.idea export-ignore
 load_data.py export-ignore
-create_db.py export-ignore
