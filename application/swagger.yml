@@ -73,7 +73,7 @@ paths:
         - Admin
       responses:
         200:
-          description: DB tables and users created successfully
+          $ref: '#/components/responses/DefaultSuccess'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
@@ -95,7 +95,7 @@ paths:
           required: true
       responses:
         200:
-          description: Machine successfully deleted
+          $ref: '#/components/responses/DefaultSuccess'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
@@ -482,7 +482,7 @@ paths:
             type: integer
       responses:
         200:
-          description: Repair log successfully deleted
+          $ref: '#/components/responses/DefaultSuccess'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
@@ -692,6 +692,17 @@ components:
         - serial
         - active
 
+    DefaultSuccess:
+      type: object
+      properties:
+        detail:
+          type: string
+        status_code:
+          type: integer
+      required:
+        - detail
+        - status_code
+
     Error:
       type: object
       properties:
@@ -758,6 +769,13 @@ components:
         WWW-Authenticate:
           schema:
             type: string
+
+    DefaultSuccess:
+      description: Operation successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DefaultSuccess'
 
     RepairLogResponse:
       description: The repair log

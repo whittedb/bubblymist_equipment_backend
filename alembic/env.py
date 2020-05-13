@@ -1,9 +1,11 @@
+import os
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
+from sqlalchemy import engine_from_config, create_engine
 from sqlalchemy import pool
 
 from alembic import context
+from application.exceptions import MissingEnvironmentValueException
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -56,11 +58,15 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    url = _get_db_uri()
+    if url:
+        connectable = create_engine(url)
+    else:
+        connectable = engine_from_config(
+            config.get_section(config.config_ini_section),
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+        )
 
     with connectable.connect() as connection:
         context.configure(
@@ -69,6 +75,30 @@ def run_migrations_online():
 
         with context.begin_transaction():
             context.run_migrations()
+
+
+def _get_db_uri():
+    try:
+        uri = os.environ["DB_URI"]
+    except KeyError:
+        raise MissingEnvironmentValueException("Environment does not define DB_URI")
+
+    try:
+        uname = os.environ["DB_USER_NAME"]
+    except KeyError:
+        raise MissingEnvironmentValueException("Environment does not define DB_USER_NAME")
+
+    try:
+        pwd = os.environ["DB_PASSWORD"]
+    except KeyError:
+        raise MissingEnvironmentValueException("Environment does not define DB_PASSWORD")
+
+    try:
+        host = os.environ["DB_HOST"]
+    except KeyError:
+        raise MissingEnvironmentValueException("Environment does not define DB_HOST")
+
+    return uri.format(uname, pwd, host)
 
 
 if context.is_offline_mode():
