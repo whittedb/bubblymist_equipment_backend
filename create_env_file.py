@@ -3,7 +3,7 @@ import re
 envre = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
 result = {}
 
-with open("bm_equipment_backend") as ins:
+with open("../environments/bm_equipment_backend") as ins:
     for line in ins:
         match = envre.match(line)
         if match is not None:
