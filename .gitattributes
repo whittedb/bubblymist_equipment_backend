@@ -4,3 +4,4 @@
 *.cmd export-ignore
 /.idea export-ignore
 load_data.py export-ignore
+install.sh eol=lf
