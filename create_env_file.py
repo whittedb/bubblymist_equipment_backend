@@ -1,8 +1,12 @@
 import re
+from pathlib import Path
 
 envre = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
 result = {}
-with open("../environments/bme_equipment_backend") as ins:
+
+location = Path("../environments")
+file_to_open = location / "bme_equipment_backend"
+with open(file_to_open) as ins:
     for line in ins:
         match = envre.match(line)
         if match is not None:
