@@ -2,6 +2,7 @@ from application import create_app, db
 from alembic.config import Config
 from alembic import command
 from application.models import User
+import load_env
 
 # Create the initial database
 app = create_app()
