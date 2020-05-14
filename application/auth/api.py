@@ -1,3 +1,4 @@
+import os
 import datetime
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -5,13 +6,16 @@ from facebook import GraphAPI, GraphAPIError
 from flask import current_app, abort, jsonify, make_response
 import jwt
 from connexion import request
-from ..models import User, RefreshTokenRequest
-from . import GOOGLE_CLIENT_ID, FACEBOOK_CLIENT_ID
+from ..models import User
+from . import GOOGLE_CLIENT_ID
 from application import db
+from application.exceptions import MissingEnvironmentValueException
 
 
 def master_key_auth(key, **kwargs):
-    master_key = "MUINxyUUB3lMH4r1vIkZUSCroUGQ_J6DF9jNF0axEIE"
+    master_key = os.environ.get("MASTER_KEY", None)
+    if master_key is None:
+        raise MissingEnvironmentValueException("Missing master key environment variable")
     if key == master_key:
         return {
             "active": True,
