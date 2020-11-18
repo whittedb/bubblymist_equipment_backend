@@ -3,13 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 import connexion
-from application.exceptions import MissingEnvironmentValueException
+from .exceptions import MissingEnvironmentValueException
+from .app_logging import logger
+import settings as settings
 
 db = SQLAlchemy()
 ma = Marshmallow()
 
 
 def create_app(config=None):
+    logger.info("Starting %s" % settings.APP_NAME)
+
     # Create the application instance
     _app = connexion.App(__name__, specification_dir='./')
     _app.app.secret_key = b'21\x08\xa8\x84\x16\xcd\xb0[\xedL\xa5b\x04J,'
@@ -40,24 +44,24 @@ def create_app(config=None):
 
 
 def _get_db_uri():
-    try:
+    if settings.DB_URI:
         uri = os.environ["DB_URI"]
-    except KeyError:
+    else:
         raise MissingEnvironmentValueException("Environment does not define DB_URI")
 
-    try:
+    if settings.DB_USER_NAME:
         uname = os.environ["DB_USER_NAME"]
-    except KeyError:
+    else:
         raise MissingEnvironmentValueException("Environment does not define DB_USER_NAME")
 
-    try:
+    if settings.DB_PASSWORD:
         pwd = os.environ["DB_PASSWORD"]
-    except KeyError:
+    else:
         raise MissingEnvironmentValueException("Environment does not define DB_PASSWORD")
 
-    try:
+    if settings.DB_HOST:
         host = os.environ["DB_HOST"]
-    except KeyError:
+    else:
         raise MissingEnvironmentValueException("Environment does not define DB_HOST")
 
     return uri.format(uname, pwd, host)

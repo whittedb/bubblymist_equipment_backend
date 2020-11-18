@@ -11,7 +11,7 @@
       "class": "logging.StreamHandler",
       "level": "DEBUG",
       "formatter": "simple",
-      "stream": "ext://sys.stdout"
+      "stream": "ext://sys.stderr"
     },
     "wsgi": {
       "class": "logging.StreamHandler",
@@ -21,9 +21,8 @@
     }
   },
   "root": {
-    "level": "DEBUG",
     "handlers": [
-      "wsgi"
+      "console"
     ]
   }
 }

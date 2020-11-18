@@ -1,20 +1,9 @@
-import os
 from enum import Enum
-import json
-import logging.config
 import csv
 import glob
 import argparse
-from application import create_app, db
+from application import create_app, db, logger
 from application.models import Washer, Dryer, RepairLog
-
-
-with open("application/logging.json") as config_data:
-    json_config = json.load(config_data)
-logging.config.dictConfig(json_config)
-logger = logging.getLogger(__name__)
-debug = os.getenv("DEBUG")
-logger.setLevel("DEBUG" if debug else "INFO")
 
 
 class MachineType(Enum):

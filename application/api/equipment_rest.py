@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from flask import abort, current_app
 from marshmallow import EXCLUDE
+import versioning
 from application import db
 from application.models import (Machine, Washer, Dryer, MachineType, RepairLog,
                                 MachineSchema, WasherSchema, DryerSchema, RepairLogSchema
@@ -11,6 +12,10 @@ class ActiveState(Enum):
     all = auto()
     active = auto()
     inactive = auto()
+
+
+def get_version():
+    return {"version": versioning.VERSION}
 
 
 def get_equipment(active_state):

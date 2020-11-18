@@ -363,6 +363,20 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           $ref: '#/components/responses/NotFound'
+  /version:
+    get:
+      x-openapi-router-controller: application.api
+      operationId: equipment_rest.get_version
+      tags:
+        - System
+      summary: Get server version
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
   /dryer:
     post:
       x-openapi-router-controller: application.api
@@ -507,6 +521,12 @@ components:
       x-apikeyInfoFunc: application.auth.api.api_auth
 
   schemas:
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+
     RepairLog:
       type: object
       properties:
