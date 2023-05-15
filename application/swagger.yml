@@ -6,22 +6,26 @@ info:
 
 # Paths supported by the server application
 servers:
-  - url: http://localhost:5000/{api_version}
+  - url: http://{server}:{port}/{api_url}/{api_version}
     description: Development Server
     variables:
       server:
-        default: http://localhost
+        default: localhost
+      api_url:
+        default: 'equipment/api'
       api_version:
         default: v1
         enum:
           - v1
       port:
         default: '5000'
-  - url: https://equipment.bubblymist.com/{api_version}
+  - url: https://{server}/{api_url}/{api_version}
     description: Production Server
     variables:
       server:
         default: https://equipment.bubblymist.com
+      api_url:
+        default: 'equipment/api'
       api_version:
         default: v1
         enum:

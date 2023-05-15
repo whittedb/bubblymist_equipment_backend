@@ -13,4 +13,4 @@ MASTER_KEY = os.environ.get("MASTER_KEY")
 LOG_DATE_FMT = os.environ.get("LOG_DATE_FMT", "%Y%m%d %H:%M:%S")
 LOG_FMT = os.environ.get("LOG_FMT", "%(asctime)s:%(levelname)s:%(threadName)-9s:%(module)s.%(funcName)s - %(message)s")
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
-APP_NAME = "bm_equipment"
+APP_NAME = "Bubbly Mist Equipment Manager"

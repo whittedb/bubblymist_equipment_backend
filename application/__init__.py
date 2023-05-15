@@ -29,7 +29,7 @@ def create_app(config=None):
     db.init_app(_app.app)
     ma.init_app(_app.app)
     if os.environ.get("ENV", "development") == "development":
-        CORS(_app.app, origins="http://localhost:8080", supports_credentials=True)
+        CORS(_app.app, origins="*", supports_credentials=True)
     else:
         CORS(_app.app)
 
